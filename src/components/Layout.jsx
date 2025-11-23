@@ -1,6 +1,72 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogOut, User, Briefcase } from 'lucide-react';
+import { LogOut, User, Briefcase, Bell } from 'lucide-react';
+import { useNotifications } from '../services/notifications';
+import { useState, useRef, useEffect } from 'react';
+
+function Notifications() {
+  const { currentUser } = useAuth();
+  const { notifications, unreadCount, markAsRead } = useNotifications(currentUser?.uid);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button 
+        onClick={() => setIsOpen(!isOpen)} 
+        className="relative p-2 text-muted hover:text-[var(--color-text-main)] transition-colors"
+      >
+        <Bell size={20} />
+        {unreadCount > 0 && (
+          <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full text-[10px] flex items-center justify-center text-white font-bold">
+            {unreadCount}
+          </span>
+        )}
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-80 bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-lg shadow-xl z-50 animate-fade-in">
+          <div className="p-md border-b border-[var(--color-border)]">
+            <h3 className="font-semibold">Notifications</h3>
+          </div>
+          <div className="max-h-[300px] overflow-y-auto">
+            {notifications.length === 0 ? (
+              <div className="p-lg text-center text-muted text-sm">
+                No notifications
+              </div>
+            ) : (
+              notifications.map(notif => (
+                <div 
+                  key={notif.id} 
+                  className={`p-md border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-bg)] transition-colors cursor-pointer ${!notif.read ? 'bg-[var(--color-primary)]/5' : ''}`}
+                  onClick={() => markAsRead(notif.id)}
+                >
+                  <Link to={notif.link || '#'} className="block">
+                    <h4 className="text-sm font-semibold mb-xs">{notif.title}</h4>
+                    <p className="text-sm text-muted">{notif.message}</p>
+                    <span className="text-xs text-muted mt-xs block">
+                      {notif.createdAt?.toDate().toLocaleDateString()}
+                    </span>
+                  </Link>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Layout({ children }) {
   const { currentUser, logout } = useAuth();
@@ -30,10 +96,13 @@ export default function Layout({ children }) {
                 <Link to="/post-gig" className="btn btn-primary text-sm">
                   Post a Gig
                 </Link>
-                <div className="flex items-center gap-sm text-sm text-muted">
+                
+                <Notifications />
+
+                <Link to="/profile" className="flex items-center gap-sm text-sm text-muted hover:text-[var(--color-primary)] transition-colors">
                   <User size={16} />
                   <span>{currentUser.displayName}</span>
-                </div>
+                </Link>
                 <button onClick={handleLogout} className="btn btn-outline text-sm">
                   <LogOut size={16} />
                 </button>

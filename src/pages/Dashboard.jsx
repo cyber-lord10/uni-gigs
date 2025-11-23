@@ -18,8 +18,7 @@ export default function Dashboard() {
         const q = query(
           collection(db, 'gigs'),
           where('university', '==', currentUser.university),
-          where('status', '==', 'open'),
-          orderBy('createdAt', 'desc')
+          where('status', '==', 'open')
         );
         
         const querySnapshot = await getDocs(q);
@@ -27,6 +26,9 @@ export default function Dashboard() {
           id: doc.id,
           ...doc.data()
         }));
+        
+        // Sort client-side to avoid Firestore index requirement
+        gigsData.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
         
         setGigs(gigsData);
       } catch (error) {

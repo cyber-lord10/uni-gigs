@@ -1,14 +1,27 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { googleProvider, githubProvider, microsoftProvider } from '../lib/firebase';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, signInWithSocial } = useAuth();
   const navigate = useNavigate();
+
+  async function handleSocialLogin(provider) {
+    try {
+      setError('');
+      setLoading(true);
+      await signInWithSocial(provider);
+      navigate('/');
+    } catch (err) {
+      setError('Failed to sign in: ' + err.message);
+    }
+    setLoading(false);
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -40,6 +53,7 @@ export default function Login() {
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
               required 
+              autocomplete
               placeholder="student@university.edu"
             />
           </div>
@@ -60,6 +74,36 @@ export default function Login() {
             {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
+
+        <div className="flex items-center gap-sm my-md">
+          <div className="h-px bg-[var(--color-border)] flex-1"></div>
+          <span className="text-muted text-sm">OR</span>
+          <div className="h-px bg-[var(--color-border)] flex-1"></div>
+        </div>
+
+        <div className="flex flex-col gap-sm">
+          <button 
+            type="button"
+            onClick={() => handleSocialLogin(googleProvider)}
+            className="btn btn-outline w-full"
+          >
+            Sign in with Google
+          </button>
+          <button 
+            type="button"
+            onClick={() => handleSocialLogin(githubProvider)}
+            className="btn btn-outline w-full"
+          >
+            Sign in with GitHub
+          </button>
+          <button 
+            type="button"
+            onClick={() => handleSocialLogin(microsoftProvider)}
+            className="btn btn-outline w-full"
+          >
+            Sign in with Microsoft
+          </button>
+        </div>
 
         <div className="text-center mt-lg text-sm text-muted">
           Need an account? <Link to="/signup" className="text-[var(--color-primary)] hover:underline">Sign Up</Link>

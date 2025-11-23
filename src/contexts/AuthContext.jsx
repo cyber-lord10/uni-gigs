@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
+  signInWithPopup,
   signOut, 
   onAuthStateChanged 
 } from 'firebase/auth';
@@ -43,6 +44,32 @@ export function AuthProvider({ children }) {
     return signInWithEmailAndPassword(auth, email, password);
   }
 
+  async function signInWithSocial(provider) {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      // Check if user exists in Firestore, if not create them
+      const docRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
+      
+      if (!docSnap.exists()) {
+        await setDoc(docRef, {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          university: user.email.split('@')[1] || 'External', // Fallback for non-edu
+          createdAt: new Date()
+        });
+      }
+      
+      return user;
+    } catch (error) {
+      console.error("Social auth error:", error);
+      throw error;
+    }
+  }
+
   function logout() {
     return signOut(auth);
   }
@@ -71,6 +98,7 @@ export function AuthProvider({ children }) {
     currentUser,
     signup,
     login,
+    signInWithSocial,
     logout
   };
 

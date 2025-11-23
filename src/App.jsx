@@ -5,6 +5,8 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import PostGig from './pages/PostGig';
+import GigDetails from './pages/GigDetails';
+import UserProfile from './pages/UserProfile';
 
 function PrivateRoute({ children }) {
   const { currentUser } = useAuth();
@@ -32,6 +34,22 @@ function App() {
               element={
                 <PrivateRoute>
                   <PostGig />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/gigs/:id" 
+              element={
+                <PrivateRoute>
+                  <GigDetails />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <PrivateRoute>
+                  <UserProfile />
                 </PrivateRoute>
               } 
             />

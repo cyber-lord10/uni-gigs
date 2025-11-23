@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { googleProvider, githubProvider, microsoftProvider } from '../lib/firebase';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -9,8 +10,20 @@ export default function Signup() {
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signup } = useAuth();
+  const { signup, signInWithSocial } = useAuth();
   const navigate = useNavigate();
+
+  async function handleSocialLogin(provider) {
+    try {
+      setError('');
+      setLoading(true);
+      await signInWithSocial(provider);
+      navigate('/');
+    } catch (err) {
+      setError('Failed to sign up: ' + err.message);
+    }
+    setLoading(false);
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -46,6 +59,7 @@ export default function Signup() {
               value={displayName} 
               onChange={(e) => setDisplayName(e.target.value)} 
               required 
+              autocomplete 
               placeholder="John Doe"
             />
           </div>
@@ -58,6 +72,7 @@ export default function Signup() {
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
               required 
+              autocomplete 
               placeholder="student@university.edu"
             />
             <p className="text-xs text-muted mt-1">Must be a valid .edu email address</p>
@@ -91,6 +106,36 @@ export default function Signup() {
             {loading ? 'Creating Account...' : 'Sign Up'}
           </button>
         </form>
+
+        <div className="flex items-center gap-sm my-md">
+          <div className="h-px bg-[var(--color-border)] flex-1"></div>
+          <span className="text-muted text-sm">OR</span>
+          <div className="h-px bg-[var(--color-border)] flex-1"></div>
+        </div>
+
+        <div className="flex flex-col gap-sm">
+          <button 
+            type="button"
+            onClick={() => handleSocialLogin(googleProvider)}
+            className="btn btn-outline w-full"
+          >
+            Sign up with Google
+          </button>
+          <button 
+            type="button"
+            onClick={() => handleSocialLogin(githubProvider)}
+            className="btn btn-outline w-full"
+          >
+            Sign up with GitHub
+          </button>
+          <button 
+            type="button"
+            onClick={() => handleSocialLogin(microsoftProvider)}
+            className="btn btn-outline w-full"
+          >
+            Sign up with Microsoft
+          </button>
+        </div>
 
         <div className="text-center mt-lg text-sm text-muted">
           Already have an account? <Link to="/login" className="text-[var(--color-primary)] hover:underline">Log In</Link>
