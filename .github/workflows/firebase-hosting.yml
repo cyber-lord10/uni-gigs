@@ -24,6 +24,7 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_UNI_GIGS }}'
           projectId: uni-gigs-b3de1
+          firebaseToolsVersion: '13.29.1'
 
   build_and_deploy:
     if: "${{ github.event.name == 'push' && github.ref == 'refs/heads/main' }}"
@@ -42,3 +43,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_UNI_GIGS }}'
           projectId: uni-gigs-b3de1
           channelId: live
+          firebaseToolsVersion: '13.29.1'
