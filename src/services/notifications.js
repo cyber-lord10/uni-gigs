@@ -1,6 +1,9 @@
 import { db } from '../lib/firebase';
-import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy, doc, updateDoc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getMessaging, getToken } from 'firebase/messaging';
 import { useState, useEffect } from 'react';
+
+const messaging = getMessaging();
 
 export async function createNotification(userId, title, message, type = 'info', link = null) {
   try {
@@ -17,6 +20,31 @@ export async function createNotification(userId, title, message, type = 'info', 
     console.error("Error creating notification:", error);
   }
 }
+
+export const NotificationService = {
+  requestPermission: async () => {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        const token = await getToken(messaging, { 
+          vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY 
+        });
+        return token;
+      }
+    } catch (error) {
+      console.error("Error requesting notification permission:", error);
+    }
+    return null;
+  },
+
+  saveToken: async (userId, token) => {
+    if (!token) return;
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {
+      fcmToken: token
+    });
+  }
+};
 
 export function useNotifications(userId) {
   const [notifications, setNotifications] = useState([]);

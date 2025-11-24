@@ -4,6 +4,8 @@ import { db } from '../lib/firebase';
 import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import { DollarSign, Clock, MapPin } from 'lucide-react';
+import Skeleton from '../components/Skeleton';
+import EmptyState from '../components/EmptyState';
 
 export default function Dashboard() {
   const { currentUser } = useAuth();
@@ -53,12 +55,30 @@ export default function Dashboard() {
       </header>
 
       {loading ? (
-        <div className="text-center py-xl text-muted">Loading gigs...</div>
-      ) : gigs.length === 0 ? (
-        <div className="card text-center py-xl">
-          <p className="text-muted mb-md">No gigs found yet.</p>
-          <Link to="/post-gig" className="btn btn-outline">Post the first Gig</Link>
+        <div className="grid gap-md">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="card">
+              <div className="flex justify-between items-start mb-sm">
+                <Skeleton className="h-6 w-1/3" />
+                <Skeleton className="h-6 w-16" />
+              </div>
+              <Skeleton className="h-4 w-full mb-xs" />
+              <Skeleton className="h-4 w-2/3 mb-md" />
+              <div className="flex gap-md">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-32" />
+              </div>
+            </div>
+          ))}
         </div>
+      ) : gigs.length === 0 ? (
+        <EmptyState 
+          title="No gigs found yet"
+          description={`Be the first to post a gig at ${currentUser?.university || 'your university'} and start earning!`}
+          actionLabel="Post the first Gig"
+          actionLink="/post-gig"
+        />
       ) : (
         <div className="grid gap-md">
           {gigs.map(gig => (

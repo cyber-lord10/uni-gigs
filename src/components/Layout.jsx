@@ -1,6 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogOut, User, Briefcase, Bell } from 'lucide-react';
+import { LogOut, User, Briefcase, Bell, Menu, X, MessageCircle } from 'lucide-react';
 import { useNotifications } from '../services/notifications';
 import { useState, useRef, useEffect } from 'react';
 
@@ -71,6 +71,13 @@ function Notifications() {
 export default function Layout({ children }) {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location]);
 
   async function handleLogout() {
     try {
@@ -83,18 +90,23 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="border-b border-[var(--color-border)] bg-[var(--color-bg-card)]">
+      <nav className="border-b border-[var(--color-border)] bg-[var(--color-bg-card)] sticky top-0 z-40">
         <div className="container flex items-center justify-between h-16">
           <Link to="/" className="text-xl font-bold text-[var(--color-primary)] flex items-center gap-sm">
             <Briefcase size={24} />
             UniGigs
           </Link>
 
-          <div className="flex items-center gap-md">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-md">
             {currentUser ? (
               <>
                 <Link to="/post-gig" className="btn btn-primary text-sm">
                   Post a Gig
+                </Link>
+
+                <Link to="/communities" className="text-muted hover:text-[var(--color-primary)] transition-colors" title="Communities">
+                  <MessageCircle size={20} />
                 </Link>
                 
                 <Notifications />
@@ -114,7 +126,58 @@ export default function Layout({ children }) {
               </>
             )}
           </div>
+
+          {/* Mobile Menu Button */}
+          <button 
+            className="md:hidden p-2 text-muted hover:text-[var(--color-text-main)]"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
+
+        {/* Mobile Navigation */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-[var(--color-border)] bg-[var(--color-bg-card)] animate-fade-in">
+            <div className="container py-md flex flex-col gap-md">
+              {currentUser ? (
+                <>
+                  <div className="flex items-center gap-sm px-sm py-xs">
+                    <User size={16} className="text-[var(--color-primary)]" />
+                    <span className="font-semibold">{currentUser.displayName}</span>
+                  </div>
+                  <Link to="/post-gig" className="btn btn-primary w-full justify-center">
+                    Post a Gig
+                  </Link>
+                  <Link to="/profile" className="btn btn-outline w-full justify-center">
+                    Profile
+                  </Link>
+                  <Link to="/saved-gigs" className="btn btn-outline w-full justify-center">
+                    Saved Gigs
+                  </Link>
+                  <Link to="/settings" className="btn btn-outline w-full justify-center">
+                    Settings
+                  </Link>
+                  <Link to="/help" className="btn btn-outline w-full justify-center">
+                    Help
+                  </Link>
+                  <div className="flex justify-between items-center px-sm">
+                    <span className="text-muted">Notifications</span>
+                    <Notifications />
+                  </div>
+                  <button onClick={handleLogout} className="btn btn-outline w-full justify-center text-red-400 border-red-400/20 hover:bg-red-400/10">
+                    <LogOut size={16} className="mr-sm" /> Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="btn btn-outline w-full justify-center">Login</Link>
+                  <Link to="/signup" className="btn btn-primary w-full justify-center">Sign Up</Link>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </nav>
 
       <main className="flex-1 container py-lg">

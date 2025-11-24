@@ -62,24 +62,43 @@ export default function UserProfile() {
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
       <div className="card mb-lg">
-        <div className="flex items-center gap-lg">
-          <div className="w-20 h-20 bg-[var(--color-primary)] rounded-full flex items-center justify-center text-3xl font-bold text-white">
-            {currentUser?.displayName?.charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold mb-xs">{currentUser?.displayName}</h1>
-            <div className="flex flex-col gap-xs text-muted text-sm">
-              <div className="flex items-center gap-xs">
-                <Mail size={16} />
-                <span>{currentUser?.email}</span>
-              </div>
-              <div className="flex items-center gap-xs">
-                <School size={16} />
-                <span>{currentUser?.university}</span>
+        <div className="flex justify-between items-start">
+          <div className="flex items-center gap-lg">
+            <img 
+              src={currentUser.photoURL || `https://ui-avatars.com/api/?name=${currentUser.displayName}`} 
+              alt={currentUser.displayName} 
+              className="w-24 h-24 rounded-full border-4 border-[var(--color-bg-card)] shadow-lg object-cover"
+            />
+            <div>
+              <h1 className="text-2xl font-bold mb-xs">{currentUser.displayName}</h1>
+              <div className="flex flex-col gap-xs text-muted text-sm">
+                <div className="flex items-center gap-xs">
+                  <Mail size={16} />
+                  <span>{currentUser.email}</span>
+                </div>
+                <div className="flex items-center gap-xs">
+                  <School size={16} />
+                  <span>{currentUser.university}</span>
+                </div>
+                {currentUser.major && (
+                  <div className="flex items-center gap-xs text-[var(--color-primary)]">
+                    <User size={16} />
+                    <span>{currentUser.major}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
+          <Link to="/profile/edit" className="btn btn-outline">
+            Edit Profile
+          </Link>
         </div>
+        {currentUser.bio && (
+          <div className="mt-lg pt-lg border-t border-[var(--color-border)]">
+            <h3 className="font-semibold mb-xs">About</h3>
+            <p className="text-muted">{currentUser.bio}</p>
+          </div>
+        )}
       </div>
 
       <div className="grid md:grid-cols-2 gap-lg">
