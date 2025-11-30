@@ -1,23 +1,26 @@
-import { HelpCircle, MessageSquare, FileText } from 'lucide-react';
+import { HelpCircle, MessageSquare, FileText } from "lucide-react";
 
 export default function Help() {
   const faqs = [
     {
       question: "How do I post a gig?",
-      answer: "Navigate to the 'Post a Gig' page from the dashboard or navigation menu. Fill in the details about the job, payment, and requirements."
+      answer:
+        "Navigate to the 'Post a Gig' page from the dashboard or navigation menu. Fill in the details about the job, payment, and requirements.",
     },
     {
       question: "Is UniGigs free to use?",
-      answer: "Yes, UniGigs is completely free for students to post and find gigs."
+      answer:
+        "Yes, UniGigs is completely free for students to post and find gigs.",
     },
     {
       question: "How do I get paid?",
-      answer: "Payment arrangements are made directly between the gig poster and the student. UniGigs facilitates the connection but does not process payments."
+      answer:
+        "Payment arrangements are made directly between the gig poster and the student. UniGigs facilitates the connection but does not process payments.",
     },
     {
       question: "Can I delete my account?",
-      answer: "Yes, you can request account deletion by contacting support."
-    }
+      answer: "Yes, you can request account deletion by contacting support.",
+    },
   ];
 
   return (
@@ -52,7 +55,10 @@ export default function Help() {
         <h2 className="text-xl font-bold mb-lg">Frequently Asked Questions</h2>
         <div className="space-y-md">
           {faqs.map((faq, index) => (
-            <div key={index} className="border-b border-[var(--color-border)] last:border-0 pb-md last:pb-0">
+            <div
+              key={index}
+              className="border-b border-[var(--color-border)] last:border-0 pb-md last:pb-0"
+            >
               <h3 className="font-semibold mb-xs">{faq.question}</h3>
               <p className="text-muted">{faq.answer}</p>
             </div>

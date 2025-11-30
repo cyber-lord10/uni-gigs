@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { db } from '../lib/firebase';
-import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
-import { Link } from 'react-router-dom';
-import { DollarSign, Clock, MapPin } from 'lucide-react';
-import Skeleton from '../components/Skeleton';
-import EmptyState from '../components/EmptyState';
+import { useEffect, useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { db } from "../lib/firebase";
+import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
+import { Link } from "react-router-dom";
+import { DollarSign, Clock, MapPin } from "lucide-react";
+import Skeleton from "../components/Skeleton";
+import EmptyState from "../components/EmptyState";
 
 export default function Dashboard() {
   const { currentUser } = useAuth();
@@ -18,20 +18,20 @@ export default function Dashboard() {
 
       try {
         const q = query(
-          collection(db, 'gigs'),
-          where('university', '==', currentUser.university),
-          where('status', '==', 'open')
+          collection(db, "gigs"),
+          where("university", "==", currentUser.university),
+          where("status", "==", "open"),
         );
-        
+
         const querySnapshot = await getDocs(q);
-        const gigsData = querySnapshot.docs.map(doc => ({
+        const gigsData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         }));
-        
+
         // Sort client-side to avoid Firestore index requirement
         gigsData.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
-        
+
         setGigs(gigsData);
       } catch (error) {
         console.error("Error fetching gigs:", error);
@@ -46,7 +46,9 @@ export default function Dashboard() {
     <div className="animate-fade-in">
       <header className="mb-lg flex justify-between items-center">
         <div>
-          <h1 className="text-2xl mb-xs">Gigs at {currentUser?.university || 'Your University'}</h1>
+          <h1 className="text-2xl mb-xs">
+            Gigs at {currentUser?.university || "Your University"}
+          </h1>
           <p className="text-muted">Find opportunities or post your own.</p>
         </div>
         <Link to="/post-gig" className="btn btn-primary">
@@ -56,7 +58,7 @@ export default function Dashboard() {
 
       {loading ? (
         <div className="grid gap-md">
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3].map((i) => (
             <div key={i} className="card">
               <div className="flex justify-between items-start mb-sm">
                 <Skeleton className="h-6 w-1/3" />
@@ -73,16 +75,20 @@ export default function Dashboard() {
           ))}
         </div>
       ) : gigs.length === 0 ? (
-        <EmptyState 
+        <EmptyState
           title="No gigs found yet"
-          description={`Be the first to post a gig at ${currentUser?.university || 'your university'} and start earning!`}
+          description={`Be the first to post a gig at ${currentUser?.university || "your university"} and start earning!`}
           actionLabel="Post the first Gig"
           actionLink="/post-gig"
         />
       ) : (
         <div className="grid gap-md">
-          {gigs.map(gig => (
-            <Link key={gig.id} to={`/gigs/${gig.id}`} className="card hover:border-[var(--color-primary)] block">
+          {gigs.map((gig) => (
+            <Link
+              key={gig.id}
+              to={`/gigs/${gig.id}`}
+              className="card hover:border-[var(--color-primary)] block"
+            >
               <div className="flex justify-between items-start mb-sm">
                 <h3 className="text-lg font-semibold">{gig.title}</h3>
                 <span className="bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-sm py-xs rounded text-sm font-bold flex items-center gap-xs">
@@ -90,9 +96,9 @@ export default function Dashboard() {
                   {gig.payment}
                 </span>
               </div>
-              
+
               <p className="text-muted mb-md line-clamp-2">{gig.description}</p>
-              
+
               <div className="flex items-center gap-md text-sm text-muted">
                 <div className="flex items-center gap-xs">
                   <Clock size={14} />
@@ -103,7 +109,10 @@ export default function Dashboard() {
                   <span>{gig.university}</span>
                 </div>
                 <div>
-                  Posted by <span className="text-[var(--color-text-main)]">{gig.posterName}</span>
+                  Posted by{" "}
+                  <span className="text-[var(--color-text-main)]">
+                    {gig.posterName}
+                  </span>
                 </div>
               </div>
             </Link>

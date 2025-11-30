@@ -1,19 +1,24 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { ToastProvider } from './contexts/ToastContext';
-import Layout from './components/Layout';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Dashboard from './pages/Dashboard';
-import PostGig from './pages/PostGig';
-import GigDetails from './pages/GigDetails';
-import UserProfile from './pages/UserProfile';
-import EditProfile from './pages/EditProfile';
-import Communities from './pages/Communities';
-import Chat from './pages/Chat';
-import Settings from './pages/Settings';
-import Help from './pages/Help';
-import SavedGigs from './pages/SavedGigs';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { ToastProvider } from "./contexts/ToastContext";
+import Layout from "./components/Layout";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import PostGig from "./pages/PostGig";
+import GigDetails from "./pages/GigDetails";
+import UserProfile from "./pages/UserProfile";
+import EditProfile from "./pages/EditProfile";
+import Communities from "./pages/Communities";
+import Chat from "./pages/Chat";
+import Settings from "./pages/Settings";
+import Help from "./pages/Help";
+import SavedGigs from "./pages/SavedGigs";
 
 function PrivateRoute({ children }) {
   const { currentUser } = useAuth();
@@ -29,85 +34,85 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              <Route 
-                path="/" 
+              <Route
+                path="/"
                 element={
                   <PrivateRoute>
                     <Dashboard />
                   </PrivateRoute>
-                } 
+                }
               />
-              <Route 
-                path="/post-gig" 
+              <Route
+                path="/post-gig"
                 element={
                   <PrivateRoute>
                     <PostGig />
                   </PrivateRoute>
-                } 
+                }
               />
-              <Route 
-                path="/gigs/:id" 
+              <Route
+                path="/gigs/:id"
                 element={
                   <PrivateRoute>
                     <GigDetails />
                   </PrivateRoute>
-                } 
+                }
               />
-              <Route 
-                path="/profile" 
+              <Route
+                path="/profile"
                 element={
                   <PrivateRoute>
                     <UserProfile />
                   </PrivateRoute>
-                } 
+                }
               />
-              <Route 
-                path="/profile/edit" 
+              <Route
+                path="/profile/edit"
                 element={
                   <PrivateRoute>
                     <EditProfile />
                   </PrivateRoute>
-                } 
+                }
               />
-              <Route 
-                path="/communities" 
+              <Route
+                path="/communities"
                 element={
                   <PrivateRoute>
                     <Communities />
                   </PrivateRoute>
-                } 
+                }
               />
-              <Route 
-                path="/communities/:id" 
+              <Route
+                path="/communities/:id"
                 element={
                   <PrivateRoute>
                     <Chat />
                   </PrivateRoute>
-                } 
+                }
               />
-              <Route 
-                path="/settings" 
+              <Route
+                path="/settings"
                 element={
                   <PrivateRoute>
                     <Settings />
                   </PrivateRoute>
-                } 
+                }
               />
-              <Route 
-                path="/help" 
+              <Route
+                path="/help"
                 element={
                   <PrivateRoute>
                     <Help />
                   </PrivateRoute>
-                } 
+                }
               />
-              <Route 
-                path="/saved-gigs" 
+              <Route
+                path="/saved-gigs"
                 element={
                   <PrivateRoute>
                     <SavedGigs />
                   </PrivateRoute>
-                } 
+                }
               />
               {/* Add more routes here */}
             </Routes>

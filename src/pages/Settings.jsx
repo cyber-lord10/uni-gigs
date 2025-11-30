@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { useToast } from '../contexts/ToastContext';
-import { Bell, Lock, Eye, Globe, Moon } from 'lucide-react';
+import { useState } from "react";
+import { useToast } from "../contexts/ToastContext";
+import { Bell, Lock, Eye, Globe, Moon } from "lucide-react";
 
 export default function Settings() {
   const { addToast } = useToast();
@@ -8,12 +8,12 @@ export default function Settings() {
     emailNotifications: true,
     pushNotifications: true,
     publicProfile: true,
-    darkMode: true
+    darkMode: true,
   });
 
   function handleToggle(key) {
-    setSettings(prev => ({ ...prev, [key]: !prev[key] }));
-    addToast('Settings saved', 'success');
+    setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
+    addToast("Settings saved", "success");
   }
 
   return (
@@ -29,24 +29,28 @@ export default function Settings() {
             <div className="flex justify-between items-center">
               <div>
                 <p className="font-medium">Email Notifications</p>
-                <p className="text-sm text-muted">Receive emails about new gigs</p>
+                <p className="text-sm text-muted">
+                  Receive emails about new gigs
+                </p>
               </div>
-              <input 
-                type="checkbox" 
-                checked={settings.emailNotifications} 
-                onChange={() => handleToggle('emailNotifications')}
+              <input
+                type="checkbox"
+                checked={settings.emailNotifications}
+                onChange={() => handleToggle("emailNotifications")}
                 className="toggle"
               />
             </div>
             <div className="flex justify-between items-center">
               <div>
                 <p className="font-medium">Push Notifications</p>
-                <p className="text-sm text-muted">Receive push notifications on your device</p>
+                <p className="text-sm text-muted">
+                  Receive push notifications on your device
+                </p>
               </div>
-              <input 
-                type="checkbox" 
-                checked={settings.pushNotifications} 
-                onChange={() => handleToggle('pushNotifications')}
+              <input
+                type="checkbox"
+                checked={settings.pushNotifications}
+                onChange={() => handleToggle("pushNotifications")}
                 className="toggle"
               />
             </div>
@@ -63,12 +67,14 @@ export default function Settings() {
             <div className="flex justify-between items-center">
               <div>
                 <p className="font-medium">Public Profile</p>
-                <p className="text-sm text-muted">Allow others to see your profile</p>
+                <p className="text-sm text-muted">
+                  Allow others to see your profile
+                </p>
               </div>
-              <input 
-                type="checkbox" 
-                checked={settings.publicProfile} 
-                onChange={() => handleToggle('publicProfile')}
+              <input
+                type="checkbox"
+                checked={settings.publicProfile}
+                onChange={() => handleToggle("publicProfile")}
                 className="toggle"
               />
             </div>
@@ -87,10 +93,10 @@ export default function Settings() {
                 <p className="font-medium">Dark Mode</p>
                 <p className="text-sm text-muted">Toggle dark theme</p>
               </div>
-              <input 
-                type="checkbox" 
-                checked={settings.darkMode} 
-                onChange={() => handleToggle('darkMode')}
+              <input
+                type="checkbox"
+                checked={settings.darkMode}
+                onChange={() => handleToggle("darkMode")}
                 className="toggle"
               />
             </div>

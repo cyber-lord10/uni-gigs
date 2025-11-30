@@ -1,10 +1,20 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { db } from '../lib/firebase';
-import { doc, getDoc, addDoc, setDoc, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
-import { DollarSign, Clock, MapPin, User, ArrowLeft } from 'lucide-react';
-import { createNotification } from '../services/notifications';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { db } from "../lib/firebase";
+import {
+  doc,
+  getDoc,
+  addDoc,
+  setDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  serverTimestamp,
+} from "firebase/firestore";
+import { DollarSign, Clock, MapPin, User, ArrowLeft } from "lucide-react";
+import { createNotification } from "../services/notifications";
 
 export default function GigDetails() {
   const { id } = useParams();
@@ -20,19 +30,19 @@ export default function GigDetails() {
   useEffect(() => {
     async function fetchGigAndApplication() {
       try {
-        const docRef = doc(db, 'gigs', id);
+        const docRef = doc(db, "gigs", id);
         const docSnap = await getDoc(docRef);
-        
+
         if (docSnap.exists()) {
           const gigData = { id: docSnap.id, ...docSnap.data() };
           setGig(gigData);
-          
+
           if (currentUser) {
             // Check if user has applied
             const q = query(
-              collection(db, 'applications'),
-              where('gigId', '==', id),
-              where('applicantId', '==', currentUser.uid)
+              collection(db, "applications"),
+              where("gigId", "==", id),
+              where("applicantId", "==", currentUser.uid),
             );
             const appSnap = await getDocs(q);
             if (!appSnap.empty) {
@@ -42,16 +52,18 @@ export default function GigDetails() {
             // If poster, fetch all applicants
             if (currentUser.uid === gigData.posterId) {
               const appsQuery = query(
-                collection(db, 'applications'),
-                where('gigId', '==', id)
+                collection(db, "applications"),
+                where("gigId", "==", id),
               );
               const appsSnap = await getDocs(appsQuery);
-              setApplicants(appsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+              setApplicants(
+                appsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+              );
             }
           }
         } else {
           console.log("No such document!");
-          navigate('/');
+          navigate("/");
         }
       } catch (error) {
         console.error("Error fetching gig:", error);
@@ -66,13 +78,13 @@ export default function GigDetails() {
     if (!currentUser) return;
     setApplying(true);
     try {
-      await addDoc(collection(db, 'applications'), {
+      await addDoc(collection(db, "applications"), {
         gigId: id,
         applicantId: currentUser.uid,
         applicantName: currentUser.displayName,
         applicantEmail: currentUser.email,
-        status: 'pending',
-        createdAt: serverTimestamp()
+        status: "pending",
+        createdAt: serverTimestamp(),
       });
       setHasApplied(true);
     } catch (error) {
@@ -86,23 +98,25 @@ export default function GigDetails() {
     try {
       // Update application status
       // Note: In a real app, you'd use a batch or transaction to close the gig if accepted
-      const appRef = doc(db, 'applications', appId);
+      const appRef = doc(db, "applications", appId);
       await setDoc(appRef, { status: newStatus }, { merge: true });
-      
+
       // Update local state
-      setApplicants(prev => prev.map(app => 
-        app.id === appId ? { ...app, status: newStatus } : app
-      ));
+      setApplicants((prev) =>
+        prev.map((app) =>
+          app.id === appId ? { ...app, status: newStatus } : app,
+        ),
+      );
 
       // Send notification to applicant
-      const applicant = applicants.find(a => a.id === appId);
+      const applicant = applicants.find((a) => a.id === appId);
       if (applicant) {
         await createNotification(
           applicant.applicantId,
           `Application Update: ${gig.title}`,
           `Your application has been ${newStatus}.`,
-          newStatus === 'accepted' ? 'success' : 'error',
-          `/gigs/${id}`
+          newStatus === "accepted" ? "success" : "error",
+          `/gigs/${id}`,
         );
       }
     } catch (error) {
@@ -111,14 +125,20 @@ export default function GigDetails() {
     }
   }
 
-  if (loading) return <div className="text-center py-xl text-muted">Loading details...</div>;
+  if (loading)
+    return (
+      <div className="text-center py-xl text-muted">Loading details...</div>
+    );
   if (!gig) return null;
 
   const isPoster = currentUser?.uid === gig.posterId;
 
   return (
     <div className="max-w-3xl mx-auto animate-fade-in">
-      <button onClick={() => navigate(-1)} className="btn btn-outline mb-md text-sm gap-xs">
+      <button
+        onClick={() => navigate(-1)}
+        className="btn btn-outline mb-md text-sm gap-xs"
+      >
         <ArrowLeft size={16} /> Back
       </button>
 
@@ -134,7 +154,12 @@ export default function GigDetails() {
         <div className="flex flex-wrap gap-lg mb-lg text-muted border-b border-[var(--color-border)] pb-lg">
           <div className="flex items-center gap-sm">
             <User size={18} />
-            <span>Posted by <span className="text-[var(--color-text-main)]">{gig.posterName}</span></span>
+            <span>
+              Posted by{" "}
+              <span className="text-[var(--color-text-main)]">
+                {gig.posterName}
+              </span>
+            </span>
           </div>
           <div className="flex items-center gap-sm">
             <MapPin size={18} />
@@ -160,12 +185,12 @@ export default function GigDetails() {
               Application Sent
             </button>
           ) : (
-            <button 
-              onClick={handleApply} 
-              disabled={applying} 
+            <button
+              onClick={handleApply}
+              disabled={applying}
               className="btn btn-primary px-xl"
             >
-              {applying ? 'Sending...' : 'Apply for Gig'}
+              {applying ? "Sending..." : "Apply for Gig"}
             </button>
           )}
         </div>
@@ -173,34 +198,43 @@ export default function GigDetails() {
 
       {isPoster && applicants.length > 0 && (
         <div className="animate-fade-in">
-          <h2 className="text-xl font-bold mb-md">Applicants ({applicants.length})</h2>
+          <h2 className="text-xl font-bold mb-md">
+            Applicants ({applicants.length})
+          </h2>
           <div className="grid gap-md">
-            {applicants.map(app => (
-              <div key={app.id} className="card flex justify-between items-center">
+            {applicants.map((app) => (
+              <div
+                key={app.id}
+                className="card flex justify-between items-center"
+              >
                 <div>
                   <h3 className="font-semibold">{app.applicantName}</h3>
                   <p className="text-sm text-muted">{app.applicantEmail}</p>
                 </div>
                 <div className="flex items-center gap-sm">
-                  {app.status === 'pending' ? (
+                  {app.status === "pending" ? (
                     <>
-                      <button 
-                        onClick={() => handleUpdateStatus(app.id, 'accepted')}
+                      <button
+                        onClick={() => handleUpdateStatus(app.id, "accepted")}
                         className="btn btn-primary text-sm bg-green-600 hover:bg-green-700"
                       >
                         Accept
                       </button>
-                      <button 
-                        onClick={() => handleUpdateStatus(app.id, 'rejected')}
+                      <button
+                        onClick={() => handleUpdateStatus(app.id, "rejected")}
                         className="btn btn-outline text-sm text-red-500 border-red-500 hover:bg-red-500/10"
                       >
                         Reject
                       </button>
                     </>
                   ) : (
-                    <span className={`px-md py-xs rounded text-sm font-bold ${
-                      app.status === 'accepted' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'
-                    }`}>
+                    <span
+                      className={`px-md py-xs rounded text-sm font-bold ${
+                        app.status === "accepted"
+                          ? "bg-green-500/10 text-green-500"
+                          : "bg-red-500/10 text-red-500"
+                      }`}
+                    >
                       {app.status.toUpperCase()}
                     </span>
                   )}

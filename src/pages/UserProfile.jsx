@@ -1,9 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { db } from '../lib/firebase';
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
-import { Link } from 'react-router-dom';
-import { User, Mail, School, DollarSign } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { db } from "../lib/firebase";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import { Link } from "react-router-dom";
+import { User, Mail, School, DollarSign } from "lucide-react";
 
 export default function UserProfile() {
   const { currentUser } = useAuth();
@@ -18,38 +25,44 @@ export default function UserProfile() {
       try {
         // Fetch My Posted Gigs
         const gigsQuery = query(
-          collection(db, 'gigs'),
-          where('posterId', '==', currentUser.uid)
+          collection(db, "gigs"),
+          where("posterId", "==", currentUser.uid),
         );
         const gigsSnap = await getDocs(gigsQuery);
-        const gigsData = gigsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const gigsData = gigsSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
         gigsData.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
         setMyGigs(gigsData);
 
         // Fetch My Applications
         const appsQuery = query(
-          collection(db, 'applications'),
-          where('applicantId', '==', currentUser.uid)
+          collection(db, "applications"),
+          where("applicantId", "==", currentUser.uid),
         );
         const appsSnap = await getDocs(appsQuery);
-        
-        const appsData = await Promise.all(appsSnap.docs.map(async (appDoc) => {
-          const appData = appDoc.data();
-          // Fetch gig details for each application
-          const gigDoc = await getDoc(doc(db, 'gigs', appData.gigId));
-          const gigData = gigDoc.exists() ? gigDoc.data() : { title: 'Unknown Gig' };
-          
-          return {
-            id: appDoc.id,
-            ...appData,
-            gigTitle: gigData.title,
-            gigPayment: gigData.payment
-          };
-        }));
-        
+
+        const appsData = await Promise.all(
+          appsSnap.docs.map(async (appDoc) => {
+            const appData = appDoc.data();
+            // Fetch gig details for each application
+            const gigDoc = await getDoc(doc(db, "gigs", appData.gigId));
+            const gigData = gigDoc.exists()
+              ? gigDoc.data()
+              : { title: "Unknown Gig" };
+
+            return {
+              id: appDoc.id,
+              ...appData,
+              gigTitle: gigData.title,
+              gigPayment: gigData.payment,
+            };
+          }),
+        );
+
         appsData.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
         setMyApplications(appsData);
-
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -64,13 +77,18 @@ export default function UserProfile() {
       <div className="card mb-lg">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-lg">
-            <img 
-              src={currentUser.photoURL || `https://ui-avatars.com/api/?name=${currentUser.displayName}`} 
-              alt={currentUser.displayName} 
+            <img
+              src={
+                currentUser.photoURL ||
+                `https://ui-avatars.com/api/?name=${currentUser.displayName}`
+              }
+              alt={currentUser.displayName}
               className="w-24 h-24 rounded-full border-4 border-[var(--color-bg-card)] shadow-lg object-cover"
             />
             <div>
-              <h1 className="text-2xl font-bold mb-xs">{currentUser.displayName}</h1>
+              <h1 className="text-2xl font-bold mb-xs">
+                {currentUser.displayName}
+              </h1>
               <div className="flex flex-col gap-xs text-muted text-sm">
                 <div className="flex items-center gap-xs">
                   <Mail size={16} />
@@ -109,15 +127,23 @@ export default function UserProfile() {
           ) : myGigs.length === 0 ? (
             <div className="card text-center py-lg">
               <p className="text-muted mb-sm">No gigs posted.</p>
-              <Link to="/post-gig" className="btn btn-primary text-sm">Post a Gig</Link>
+              <Link to="/post-gig" className="btn btn-primary text-sm">
+                Post a Gig
+              </Link>
             </div>
           ) : (
             <div className="grid gap-sm">
-              {myGigs.map(gig => (
-                <Link key={gig.id} to={`/gigs/${gig.id}`} className="card hover:border-[var(--color-primary)] block p-md">
+              {myGigs.map((gig) => (
+                <Link
+                  key={gig.id}
+                  to={`/gigs/${gig.id}`}
+                  className="card hover:border-[var(--color-primary)] block p-md"
+                >
                   <div className="flex justify-between items-start">
                     <h3 className="font-semibold line-clamp-1">{gig.title}</h3>
-                    <span className={`text-xs px-sm py-xs rounded ${gig.status === 'open' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                    <span
+                      className={`text-xs px-sm py-xs rounded ${gig.status === "open" ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"}`}
+                    >
                       {gig.status.toUpperCase()}
                     </span>
                   </div>
@@ -137,15 +163,25 @@ export default function UserProfile() {
             </div>
           ) : (
             <div className="grid gap-sm">
-              {myApplications.map(app => (
-                <Link key={app.id} to={`/gigs/${app.gigId}`} className="card hover:border-[var(--color-primary)] block p-md">
+              {myApplications.map((app) => (
+                <Link
+                  key={app.id}
+                  to={`/gigs/${app.gigId}`}
+                  className="card hover:border-[var(--color-primary)] block p-md"
+                >
                   <div className="flex justify-between items-start mb-xs">
-                    <h3 className="font-semibold line-clamp-1">{app.gigTitle}</h3>
-                    <span className={`text-xs px-sm py-xs rounded font-bold ${
-                      app.status === 'accepted' ? 'bg-green-500/10 text-green-500' : 
-                      app.status === 'rejected' ? 'bg-red-500/10 text-red-500' : 
-                      'bg-yellow-500/10 text-yellow-500'
-                    }`}>
+                    <h3 className="font-semibold line-clamp-1">
+                      {app.gigTitle}
+                    </h3>
+                    <span
+                      className={`text-xs px-sm py-xs rounded font-bold ${
+                        app.status === "accepted"
+                          ? "bg-green-500/10 text-green-500"
+                          : app.status === "rejected"
+                            ? "bg-red-500/10 text-red-500"
+                            : "bg-yellow-500/10 text-yellow-500"
+                      }`}
+                    >
                       {app.status.toUpperCase()}
                     </span>
                   </div>

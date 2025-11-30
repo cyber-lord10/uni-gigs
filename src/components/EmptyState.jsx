@@ -1,13 +1,13 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { FolderOpen } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { FolderOpen } from "lucide-react";
 
-export default function EmptyState({ 
-  title = "No data found", 
-  description = "There is nothing here yet.", 
-  actionLabel, 
+export default function EmptyState({
+  title = "No data found",
+  description = "There is nothing here yet.",
+  actionLabel,
   actionLink,
-  icon: Icon = FolderOpen
+  icon: Icon = FolderOpen,
 }) {
   return (
     <div className="card text-center py-xl flex flex-col items-center animate-fade-in">

@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { ChatService } from '../services/chat';
-import { Users, MessageCircle, Plus } from 'lucide-react';
-import Skeleton from '../components/Skeleton';
-import EmptyState from '../components/EmptyState';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { ChatService } from "../services/chat";
+import { Users, MessageCircle, Plus } from "lucide-react";
+import Skeleton from "../components/Skeleton";
+import EmptyState from "../components/EmptyState";
 
 export default function Communities() {
   const { currentUser } = useAuth();
@@ -17,21 +17,21 @@ export default function Communities() {
         try {
           // For demo, ensure at least one community exists
           let comms = await ChatService.getCommunities(currentUser.university);
-          
+
           if (comms.length === 0) {
             await ChatService.createCommunity(
-              `${currentUser.university} General`, 
-              'General discussion for students.', 
-              currentUser.university
+              `${currentUser.university} General`,
+              "General discussion for students.",
+              currentUser.university,
             );
             await ChatService.createCommunity(
-              'Global Tech Talk', 
-              'Discuss technology and coding.', 
-              'Global'
+              "Global Tech Talk",
+              "Discuss technology and coding.",
+              "Global",
             );
             comms = await ChatService.getCommunities(currentUser.university);
           }
-          
+
           setCommunities(comms);
         } catch (error) {
           console.error("Error loading communities:", error);
@@ -47,25 +47,29 @@ export default function Communities() {
       <header className="mb-lg flex justify-between items-center">
         <div>
           <h1 className="text-2xl mb-xs">Communities</h1>
-          <p className="text-muted">Connect with students at {currentUser?.university}</p>
+          <p className="text-muted">
+            Connect with students at {currentUser?.university}
+          </p>
         </div>
       </header>
 
       {loading ? (
         <div className="grid gap-md">
-          {[1, 2, 3].map(i => <Skeleton key={i} className="h-24 w-full" />)}
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-24 w-full" />
+          ))}
         </div>
       ) : communities.length === 0 ? (
-        <EmptyState 
-          title="No communities found" 
+        <EmptyState
+          title="No communities found"
           description="Be the first to start a community!"
           icon={Users}
         />
       ) : (
         <div className="grid gap-md">
-          {communities.map(comm => (
-            <Link 
-              key={comm.id} 
+          {communities.map((comm) => (
+            <Link
+              key={comm.id}
               to={`/communities/${comm.id}`}
               className="card hover:border-[var(--color-primary)] flex items-center gap-lg p-lg transition-all"
             >

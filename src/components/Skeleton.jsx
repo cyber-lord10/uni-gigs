@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 export default function Skeleton({ className, ...props }) {
   return (
-    <div 
-      className={`animate-pulse bg-[var(--color-border)] rounded ${className}`} 
+    <div
+      className={`animate-pulse bg-[var(--color-border)] rounded ${className}`}
       {...props}
     />
   );

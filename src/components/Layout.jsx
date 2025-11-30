@@ -1,12 +1,22 @@
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { LogOut, User, Briefcase, Bell, Menu, X, MessageCircle } from 'lucide-react';
-import { useNotifications } from '../services/notifications';
-import { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import {
+  LogOut,
+  User,
+  Briefcase,
+  Bell,
+  Menu,
+  X,
+  MessageCircle,
+} from "lucide-react";
+import { useNotifications } from "../services/notifications";
+import { useState, useRef, useEffect } from "react";
 
 function Notifications() {
   const { currentUser } = useAuth();
-  const { notifications, unreadCount, markAsRead } = useNotifications(currentUser?.uid);
+  const { notifications, unreadCount, markAsRead } = useNotifications(
+    currentUser?.uid,
+  );
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -22,8 +32,8 @@ function Notifications() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button 
-        onClick={() => setIsOpen(!isOpen)} 
+      <button
+        onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-muted hover:text-[var(--color-text-main)] transition-colors"
       >
         <Bell size={20} />
@@ -45,14 +55,16 @@ function Notifications() {
                 No notifications
               </div>
             ) : (
-              notifications.map(notif => (
-                <div 
-                  key={notif.id} 
-                  className={`p-md border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-bg)] transition-colors cursor-pointer ${!notif.read ? 'bg-[var(--color-primary)]/5' : ''}`}
+              notifications.map((notif) => (
+                <div
+                  key={notif.id}
+                  className={`p-md border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-bg)] transition-colors cursor-pointer ${!notif.read ? "bg-[var(--color-primary)]/5" : ""}`}
                   onClick={() => markAsRead(notif.id)}
                 >
-                  <Link to={notif.link || '#'} className="block">
-                    <h4 className="text-sm font-semibold mb-xs">{notif.title}</h4>
+                  <Link to={notif.link || "#"} className="block">
+                    <h4 className="text-sm font-semibold mb-xs">
+                      {notif.title}
+                    </h4>
                     <p className="text-sm text-muted">{notif.message}</p>
                     <span className="text-xs text-muted mt-xs block">
                       {notif.createdAt?.toDate().toLocaleDateString()}
@@ -82,9 +94,9 @@ export default function Layout({ children }) {
   async function handleLogout() {
     try {
       await logout();
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
-      console.error('Failed to log out', error);
+      console.error("Failed to log out", error);
     }
   }
 
@@ -92,7 +104,10 @@ export default function Layout({ children }) {
     <div className="min-h-screen flex flex-col">
       <nav className="border-b border-[var(--color-border)] bg-[var(--color-bg-card)] sticky top-0 z-40">
         <div className="container flex items-center justify-between h-16">
-          <Link to="/" className="text-xl font-bold text-[var(--color-primary)] flex items-center gap-sm">
+          <Link
+            to="/"
+            className="text-xl font-bold text-[var(--color-primary)] flex items-center gap-sm"
+          >
             <Briefcase size={24} />
             UniGigs
           </Link>
@@ -105,30 +120,44 @@ export default function Layout({ children }) {
                   Post a Gig
                 </Link>
 
-                <Link to="/communities" className="text-muted hover:text-[var(--color-primary)] transition-colors" title="Communities">
+                <Link
+                  to="/communities"
+                  className="text-muted hover:text-[var(--color-primary)] transition-colors"
+                  title="Communities"
+                >
                   <MessageCircle size={20} />
                 </Link>
-                
+
                 <Notifications />
 
-                <Link to="/profile" className="flex items-center gap-sm text-sm text-muted hover:text-[var(--color-primary)] transition-colors">
+                <Link
+                  to="/profile"
+                  className="flex items-center gap-sm text-sm text-muted hover:text-[var(--color-primary)] transition-colors"
+                >
                   <User size={16} />
                   <span>{currentUser.displayName}</span>
                 </Link>
-                <button onClick={handleLogout} className="btn btn-outline text-sm">
+                <button
+                  onClick={handleLogout}
+                  className="btn btn-outline text-sm"
+                >
                   <LogOut size={16} />
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" className="btn btn-outline text-sm">Login</Link>
-                <Link to="/signup" className="btn btn-primary text-sm">Sign Up</Link>
+                <Link to="/login" className="btn btn-outline text-sm">
+                  Login
+                </Link>
+                <Link to="/signup" className="btn btn-primary text-sm">
+                  Sign Up
+                </Link>
               </>
             )}
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className="md:hidden p-2 text-muted hover:text-[var(--color-text-main)]"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -144,35 +173,65 @@ export default function Layout({ children }) {
                 <>
                   <div className="flex items-center gap-sm px-sm py-xs">
                     <User size={16} className="text-[var(--color-primary)]" />
-                    <span className="font-semibold">{currentUser.displayName}</span>
+                    <span className="font-semibold">
+                      {currentUser.displayName}
+                    </span>
                   </div>
-                  <Link to="/post-gig" className="btn btn-primary w-full justify-center">
+                  <Link
+                    to="/post-gig"
+                    className="btn btn-primary w-full justify-center"
+                  >
                     Post a Gig
                   </Link>
-                  <Link to="/profile" className="btn btn-outline w-full justify-center">
+                  <Link
+                    to="/profile"
+                    className="btn btn-outline w-full justify-center"
+                  >
                     Profile
                   </Link>
-                  <Link to="/saved-gigs" className="btn btn-outline w-full justify-center">
+                  <Link
+                    to="/saved-gigs"
+                    className="btn btn-outline w-full justify-center"
+                  >
                     Saved Gigs
                   </Link>
-                  <Link to="/settings" className="btn btn-outline w-full justify-center">
+                  <Link
+                    to="/settings"
+                    className="btn btn-outline w-full justify-center"
+                  >
                     Settings
                   </Link>
-                  <Link to="/help" className="btn btn-outline w-full justify-center">
+                  <Link
+                    to="/help"
+                    className="btn btn-outline w-full justify-center"
+                  >
                     Help
                   </Link>
                   <div className="flex justify-between items-center px-sm">
                     <span className="text-muted">Notifications</span>
                     <Notifications />
                   </div>
-                  <button onClick={handleLogout} className="btn btn-outline w-full justify-center text-red-400 border-red-400/20 hover:bg-red-400/10">
+                  <button
+                    onClick={handleLogout}
+                    className="btn btn-outline w-full justify-center text-red-400 border-red-400/20 hover:bg-red-400/10"
+                  >
                     <LogOut size={16} className="mr-sm" /> Logout
                   </button>
                 </>
               ) : (
                 <>
-                  <Link to="/login" className="btn btn-outline w-full justify-center">Login</Link>
-                  <Link to="/signup" className="btn btn-primary w-full justify-center">Sign Up</Link>
+                  <Link
+                    to="/login"
+                    className="btn btn-outline w-full justify-center"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="btn btn-primary w-full justify-center"
+                  >
+                    Sign Up
+                  </Link>
                 </>
               )}
             </div>
@@ -180,9 +239,7 @@ export default function Layout({ children }) {
         )}
       </nav>
 
-      <main className="flex-1 container py-lg">
-        {children}
-      </main>
+      <main className="flex-1 container py-lg">{children}</main>
     </div>
   );
 }
